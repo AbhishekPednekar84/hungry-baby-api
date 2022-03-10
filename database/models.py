@@ -6,7 +6,10 @@ from sqlalchemy import Date
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import relationship
 
 from database.db import Base
@@ -20,6 +23,8 @@ class Recipe(Base):
     excerpt = Column(String(500), nullable=False)
     featured_image = Column(String(250), nullable=False)
     slug = Column(String(300), nullable=False, index=True)
+    author = Column(String(50))
+    primary_tag = Column(String(50))
     date_created = Column(Date, default=date.today)
 
     def __repr__(self) -> str:
@@ -31,10 +36,30 @@ class RecipeContent(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     recipe_id = Column(UUID, ForeignKey("recipes.id"))
-    section = Column(String(100), nullable=False, index=True)
-    content = Column(String(10000), index=True)
+    prep_time = Column(Integer, nullable=False)
+    cook_time = Column(Integer, nullable=False)
+    ingredients = Column(String(5000), nullable=False, index=True)
+    procedure = Column(String(10000), nullable=False, index=True)
+    tags = Column(String(1000), nullable=False, index=True)
+    notes = Column(String(1000))
+    nutritional_value = Column(MutableList.as_mutable(JSONB))
+    ingredients_token = Column(TSVECTOR)
 
     recipe = relationship(Recipe)
 
     def __repr__(self) -> str:
         return f"RecipeContent({self.recipe_id})"
+
+
+class FAQ(Base):
+    __tablename__ = "faqs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    recipe_id = Column(UUID, ForeignKey("recipes.id"))
+    question = Column(String(500), nullable=False)
+    answer = Column(String(2000), nullable=False)
+
+    recipe = relationship(Recipe)
+
+    def __repr__(self) -> str:
+        return f"FAQ({self.question})"
