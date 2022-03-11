@@ -1,3 +1,4 @@
+alembic==1.7.6
 anyio==3.5.0
 asgiref==3.5.0
 cfgv==3.3.1
@@ -10,6 +11,10 @@ greenlet==1.1.2
 h11==0.13.0
 identify==2.4.8
 idna==3.3
+importlib-metadata==4.10.1
+importlib-resources==5.4.0
+Mako==1.1.6
+MarkupSafe==2.0.1
 nodeenv==1.6.0
 platformdirs==2.4.1
 pre-commit==2.17.0
@@ -25,3 +30,4 @@ toml==0.10.2
 typing-extensions==4.0.1
 uvicorn==0.17.4
 virtualenv==20.13.0
+zipp==3.7.0
