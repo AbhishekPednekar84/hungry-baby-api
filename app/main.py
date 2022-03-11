@@ -8,6 +8,7 @@ from starlette.middleware.cors import CORSMiddleware
 from database.db import engine
 from database import models
 from routers import recipes
+from routers import index
 
 app = FastAPI()
 
@@ -26,3 +27,4 @@ app.add_middleware(
 prefix = "/api/v1"
 
 app.include_router(recipes.router, prefix=prefix)
+app.include_router(index.router)
