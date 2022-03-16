@@ -55,7 +55,7 @@ class RecipeTag(BaseModel):
 
 
 def all_recipes(db: Session = Depends(get_db)):
-    return db.query(Recipe).all()
+    return db.query(Recipe).filter(Recipe.active_recipe == True).all()
 
 
 def clear_search(meal_type: str, db: Session = Depends(get_db)):
@@ -70,7 +70,9 @@ def clear_search(meal_type: str, db: Session = Depends(get_db)):
             RecipeContent.tags,
         )
         .join(RecipeContent, RecipeContent.recipe_id == Recipe.id)
-        .filter(RecipeContent.tags.ilike(f"%{meal_type}%"))
+        .filter(
+            RecipeContent.tags.ilike(f"%{meal_type}%"), Recipe.active_recipe == True
+        )
         .all()
     )
 
@@ -86,7 +88,7 @@ def clear_search_for_primary_tag(primary_tag: str, db: Session = Depends(get_db)
             RecipeContent.tags,
         )
         .join(RecipeContent, RecipeContent.recipe_id == Recipe.id)
-        .filter(Recipe.primary_tag == primary_tag)
+        .filter(Recipe.primary_tag == primary_tag, Recipe.active_recipe == True)
         .all()
     )
 
@@ -137,7 +139,7 @@ def get_Recipe_from_slug(slug: str, db: Session = Depends(get_db)):
                 Recipe.author,
                 Recipe.primary_tag,
             )
-            .filter(Recipe.slug == slug)
+            .filter(Recipe.slug == slug, Recipe.active_recipe == True)
             .first()
         )
 
@@ -200,7 +202,7 @@ def get_recipes_from_tag(tag: str, db: Session = Depends(get_db)):
                 RecipeContent.tags,
             )
             .join(RecipeContent, RecipeContent.recipe_id == Recipe.id)
-            .filter(RecipeContent.tags.ilike(tag))
+            .filter(RecipeContent.tags.ilike(tag), Recipe.active_recipe == True)
             .all()
         )
     except Exception:
@@ -238,7 +240,9 @@ def get_recipes_from_primary_tag(primary_tag: str, db: Session = Depends(get_db)
                 RecipeContent.tags,
             )
             .join(RecipeContent, RecipeContent.recipe_id == Recipe.id)
-            .filter(Recipe.primary_tag == primary_tag.lower())
+            .filter(
+                Recipe.primary_tag == primary_tag.lower(), Recipe.active_recipe == True
+            )
             .all()
         )
     except Exception:
@@ -273,6 +277,7 @@ def search_recipes(search_text: str, meal_type: str, db: Session = Depends(get_d
             .filter(
                 RecipeContent.tags.ilike(f"%{meal_type}%"),
                 RecipeContent.ingredients_token.match(f"{search_text}:*"),
+                Recipe.active_recipe == True,
             )
             .all()
         )
@@ -307,7 +312,10 @@ def search_recipes_from_primary_tag(
                 RecipeContent.tags,
             )
             .join(RecipeContent, RecipeContent.recipe_id == Recipe.id)
-            .filter(RecipeContent.ingredients_token.match(f"{search_text}:*"))
+            .filter(
+                RecipeContent.ingredients_token.match(f"{search_text}:*"),
+                Recipe.active_recipe == True,
+            )
             .all()
         )
     except Exception:

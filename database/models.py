@@ -1,6 +1,7 @@
 import uuid
 from datetime import date
 
+from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import Date
 from sqlalchemy import ForeignKey
@@ -26,6 +27,8 @@ class Recipe(Base):
     author = Column(String(50))
     primary_tag = Column(String(50))
     date_created = Column(Date, default=date.today)
+    date_updated = Column(Date)
+    active_recipe = Column(Boolean, default=False)
 
     def __repr__(self) -> str:
         return f"Recipe({self.title})"
