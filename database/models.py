@@ -47,6 +47,7 @@ class RecipeContent(Base):
     notes = Column(String(1000))
     nutritional_value = Column(MutableList.as_mutable(JSONB))
     ingredients_token = Column(TSVECTOR)
+    plugged_products = Column(String(50))
 
     recipe = relationship(Recipe)
 
@@ -66,3 +67,16 @@ class FAQ(Base):
 
     def __repr__(self) -> str:
         return f"FAQ({self.question})"
+
+
+class ProductPlug(Base):
+    __tablename__ = "productplugs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    category = Column(String(100))
+    product_name = Column(String(100))
+    product_url = Column(String(500))
+    product_image = Column(String(500))
+
+    def __repr__(self) -> str:
+        return f"ProductPlug({self.id}, {self.product_name})"

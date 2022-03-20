@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from . import get_db
 from . import router
 from database.models import FAQ
+from database.models import ProductPlug
 from database.models import Recipe
 from database.models import RecipeContent
 
@@ -132,6 +133,7 @@ def get_random_recipe(db: Session = Depends(get_db)):
 def get_Recipe_from_slug(slug: str, db: Session = Depends(get_db)):
     try:
         full_recipe = {}
+        plugged_product = {}
 
         recipe = (
             db.query(
@@ -163,6 +165,19 @@ def get_Recipe_from_slug(slug: str, db: Session = Depends(get_db)):
         )
 
         for content in contents:
+            if content.plugged_products:
+
+                product = (
+                    db.query(ProductPlug)
+                    .filter(ProductPlug.category == content.plugged_products)
+                    .first()
+                )
+
+                plugged_product["product_name"] = product.product_name
+                plugged_product["product_url"] = product.product_url
+                plugged_product["product_image"] = product.product_image
+
+        for content in contents:
             full_recipe["prep_time"] = content.prep_time
             full_recipe["cook_time"] = content.cook_time
             full_recipe["total_time"] = content.prep_time + content.cook_time
@@ -181,6 +196,7 @@ def get_Recipe_from_slug(slug: str, db: Session = Depends(get_db)):
             full_recipe["featured_image"] = recipe.featured_image
             full_recipe["date_published"] = recipe.date_created
             full_recipe["author"] = recipe.author
+            full_recipe["plugged_product"] = plugged_product
 
         return full_recipe
     except Exception:
