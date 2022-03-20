@@ -73,7 +73,7 @@ class ProductPlug(Base):
     __tablename__ = "productplugs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    category = Column(String(100))
+    category = Column(String(100), index=True)
     product_name = Column(String(100))
     product_url = Column(String(500))
     product_image = Column(String(500))
