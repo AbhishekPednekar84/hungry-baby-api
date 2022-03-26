@@ -338,6 +338,7 @@ def search_recipes_from_primary_tag(
             .join(RecipeContent, RecipeContent.recipe_id == Recipe.id)
             .filter(
                 RecipeContent.ingredients_token.match(f"{search_text}:*"),
+                Recipe.primary_tag == primary_tag,
                 Recipe.active_recipe == True,
             )
             .order_by(Recipe.date_created.desc())
